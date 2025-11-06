@@ -127,252 +127,61 @@ $servicos = $wpdb->get_results("SELECT * FROM $table_servicos");
 ?>
 
 <?php wp_head(); ?>
+
 <style>
-body { 
-    background:#FFEFF; 
-    font-family:system-ui,sans-serif; 
-    margin:0; 
-    padding:0; 
-    color:#000; 
-}
+    body { background:#ffffff; font-family:system-ui,sans-serif; margin:0; padding:0; color:#000; }
+    .header-login { display:flex; justify-content:space-between; align-items:center; padding:30px 50px; max-width:1200px; margin:0 auto; }
+    .header-login a { font-weight:700; font-size:2rem; text-decoration:none; color:#000; }
+    .header-login nav a { margin-left:20px; font-size:1rem; font-weight:500; text-decoration:none; color:#000; transition:0.3s; }
+    .header-login nav a:hover { text-decoration:underline; }
 
-.header-login { 
-    display:flex; 
-    justify-content:space-between; 
-    align-items:center; 
-    padding:30px 50px; 
-    max-width:1200px; 
-    margin:0 auto; 
-}
+    .container { max-width:1200px; margin:30px auto 50px auto; display:grid; grid-template-columns:320px 1fr; gap:20px; }
 
-.header-login a { 
-    font-weight:700; 
-    font-size:2rem; 
-    text-decoration:none; 
-    color:#000; 
-}
+    .sidebar { background:#fff; padding:20px; border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,0.12); }
+    .sidebar h2 { margin-top:0; font-size:22px; margin-bottom:15px; }
+    .sidebar input { width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:10px; font-size:14px; box-sizing:border-box; }
 
-.header-login nav a { 
-    margin-left:20px; 
-    font-size:1rem; 
-    font-weight:500; 
-    text-decoration:none; 
-    color:#000; 
-    transition:0.3s; 
-}
+    .servicos-container { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+    .servico-card { padding:10px; border-radius:10px; background:#eee; text-align:center; cursor:pointer; font-weight:500; user-select:none; transition:0.3s; }
+    .servico-card.selected { background:#000; color:#fff; }
 
-.header-login nav a:hover { 
-    text-decoration:underline; 
-}
+    #calendar { background:#fff; padding:20px; border-radius:20px; min-height:600px; box-shadow:0 10px 40px rgba(0,0,0,0.12); }
 
-.container { 
-    max-width:1200px; 
-    margin:30px auto 50px auto; 
-    display:grid; 
-    grid-template-columns:320px 1fr; 
-    gap:20px; 
-}
+    #caixaHorarios { margin-top:20px; background:#fff; padding:20px; border-radius:20px; display:none; box-shadow:0 10px 40px rgba(0,0,0,0.12); }
 
-.sidebar { 
-    background:#fff; 
-    padding:20px; 
-    border-radius:20px; 
-    box-shadow:0 10px 40px rgba(0,0,0,0.12); 
-}
+    #horariosDisponiveis { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:15px; }
+    #horariosDisponiveis div { padding:8px; border-radius:8px; cursor:pointer; background:#eee; text-align:center; font-weight:500; }
+    #horariosDisponiveis div.ocupado { color:#fff; cursor:not-allowed; }
+    #horariosDisponiveis div.ocupado.red { background:red; }
+    #horariosDisponiveis div.ocupado.purple { background:purple; }
+    #horariosDisponiveis div.selecionado { background:green; color:#fff; }
 
-.sidebar h2 { 
-    margin-top:0; 
-    font-size:22px; 
-    margin-bottom:15px; 
-}
+    button.agendarBtn { margin-top:10px; background:#000; color:#fff; padding:8px 15px; border:none; border-radius:10px; cursor:pointer; font-size:14px; transition:0.3s; }
+    button.agendarBtn:hover { background:#444; }
 
-.sidebar input { 
-    width:100%; 
-    padding:10px; 
-    margin:8px 0; 
-    border:1px solid #ddd; 
-    border-radius:10px; 
-    font-size:14px; 
-    box-sizing:border-box; 
-}
+    .popup { position:fixed; top:20px; right:20px; background:#000; color:#fff; padding:15px 25px; border-radius:12px; display:none; z-index:999; }
 
-.servicos-container { 
-    display:grid; 
-    grid-template-columns:1fr 1fr; 
-    gap:10px; 
-    margin-top:10px; 
-}
+    .modal { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#fdfdfd; padding:25px; border-radius:16px; box-shadow:0 15px 50px rgba(0,0,0,0.3); z-index:10000; display:none; max-width:450px; width:90%; font-family:system-ui,sans-serif; animation:fadeIn 0.3s ease; text-align:center; }
+    .modal h3 { margin-top:0; font-size:20px; color:#222; }
+    .modal .close { float:right; cursor:pointer; font-weight:bold; font-size:18px; }
+    .modal ul { padding-left:0; margin-top:10px; list-style:none; }
+    .modal ul li { margin-bottom:5px; color:#555; }
 
-.servico-card { 
-    padding:10px; 
-    border-radius:10px; 
-    background:#eee; 
-    text-align:center; 
-    cursor:pointer; 
-    font-weight:500; 
-    user-select:none; 
-    transition:0.3s; 
-}
+    @keyframes fadeIn { from {opacity:0; transform:translate(-50%,-48%);} to {opacity:1; transform:translate(-50%,-50%);} }
 
-.servico-card.selected { 
-    background:#000; 
-    color:#fff; 
-}
-
-#calendar { 
-    background:#fff; 
-    padding:20px; 
-    border-radius:20px; 
-    min-height:600px; 
-    box-shadow:0 10px 40px rgba(0,0,0,0.12); 
-}
-
-#caixaHorarios { 
-    margin-top:20px; 
-    background:#fff; 
-    padding:20px; 
-    border-radius:20px; 
-    display:none; 
-    box-shadow:0 10px 40px rgba(0,0,0,0.12); 
-}
-
-#horariosDisponiveis { 
-    display:grid; 
-    grid-template-columns:repeat(3, 1fr); 
-    gap:8px; 
-    margin-top:15px; 
-}
-
-#horariosDisponiveis div { 
-    padding:8px; 
-    border-radius:8px; 
-    cursor:pointer; 
-    background:#eee; 
-    text-align:center; 
-    font-weight:500;
-}
-
-#horariosDisponiveis div.ocupado { 
-    color:#fff; 
-    cursor:not-allowed; 
-}
-
-#horariosDisponiveis div.ocupado.red { 
-    background:red; 
-}
-
-#horariosDisponiveis div.ocupado.purple { 
-    background:purple; 
-}
-
-#horariosDisponiveis div.selecionado { 
-    background:green; 
-    color:#fff; 
-}
-
-button.agendarBtn { 
-    margin-top:10px; 
-    background:#000; 
-    color:#fff; 
-    padding:8px 15px; 
-    border:none; 
-    border-radius:10px; 
-    cursor:pointer; 
-    font-size:14px; 
-    transition:0.3s; 
-}
-
-button.agendarBtn:hover { 
-    background:#444; 
-}
-
-.popup { 
-    position: fixed; 
-    top:20px; 
-    right:20px; 
-    background:#000; 
-    color:#fff; 
-    padding:15px 25px; 
-    border-radius:12px; 
-    display:none; 
-    z-index:999; 
-}
-
-/* Modal bonito e centralizado */
-.modal { 
-    position: fixed; 
-    top:50%; 
-    left:50%; 
-    transform: translate(-50%,-50%); 
-    background:#fdfdfd; 
-    padding:25px; 
-    border-radius:16px; 
-    box-shadow:0 15px 50px rgba(0,0,0,0.3); 
-    z-index:10000; 
-    display:none; 
-    max-width:450px; 
-    width:90%; 
-    font-family:system-ui,sans-serif; 
-    animation:fadeIn 0.3s ease; 
-    text-align:center; 
-}
-
-.modal h3 { 
-    margin-top:0; 
-    font-size:20px; 
-    color:#222; 
-}
-
-.modal .close { 
-    float:right; 
-    cursor:pointer; 
-    font-weight:bold; 
-    font-size:18px; 
-}
-
-.modal ul { 
-    padding-left:0; 
-    margin-top:10px; 
-    list-style:none; 
-}
-
-.modal ul li { 
-    margin-bottom:5px; 
-    color:#555; 
-}
-
-@keyframes fadeIn { 
-    from {opacity:0; transform:translate(-50%,-48%);} 
-    to {opacity:1; transform:translate(-50%,-50%);} 
-}
-
-/* Responsividade */
-@media (max-width: 900px) {
-    .container {
-        grid-template-columns: 1fr; /* uma coluna */
-        margin: 20px;
+    @media (max-width:900px) {
+        .container { grid-template-columns:1fr; margin:20px; }
+        #calendar { min-height:400px; }
+        .sidebar { margin-bottom:20px; }
     }
-    #calendar {
-        min-height: 400px;
-    }
-    .sidebar {
-        margin-bottom: 20px;
-    }
-}
 
-@media (max-width: 500px) {
-    .sidebar input, .servicos-container {
-        font-size: 14px;
+    @media (max-width:500px) {
+        .sidebar input, .servicos-container { font-size:14px; }
+        .servicos-container { grid-template-columns:1fr; }
+        button.agendarBtn { width:100%; }
     }
-    .servicos-container {
-        grid-template-columns: 1fr; /* serviços empilhados */
-    }
-    button.agendarBtn {
-        width: 100%; /* botão ocupa toda a largura */
-    }
-}
-
 </style>
+
 
 
 
