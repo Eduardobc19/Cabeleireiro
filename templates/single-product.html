@@ -1,0 +1,58 @@
+<!-- wp:template-part {"slug":"header","theme":"ruby-ecommerce"} /-->
+
+<!-- wp:group {"tagName":"main","style":{"spacing":{"padding":{"bottom":"var:preset|spacing|superbspacing-medium"}}},"layout":{"inherit":true,"type":"constrained"}} -->
+<main class="wp-block-group" style="padding-bottom:var(--wp--preset--spacing--superbspacing-medium)"><!-- wp:woocommerce/breadcrumbs /-->
+
+<!-- wp:woocommerce/store-notices /-->
+
+<!-- wp:columns {"align":"wide","style":{"spacing":{"blockGap":{"top":"var:preset|spacing|superbspacing-xxsmall"}}}} -->
+<div class="wp-block-columns alignwide"><!-- wp:column {"width":"40%"} -->
+<div class="wp-block-column" style="flex-basis:40%"><!-- wp:woocommerce/product-image-gallery /--></div>
+<!-- /wp:column -->
+
+<!-- wp:column {"width":"60%"} -->
+<div class="wp-block-column" style="flex-basis:60%"><!-- wp:post-title {"level":1,"style":{"typography":{"fontSize":"40px"}},"__woocommerceNamespace":"woocommerce/product-query/product-title"} /-->
+
+<!-- wp:woocommerce/product-rating {"isDescendentOfSingleProductTemplate":true} /-->
+
+<!-- wp:woocommerce/product-price {"isDescendentOfSingleProductTemplate":true,"style":{"typography":{"fontSize":"32px"}}} /-->
+
+<!-- wp:post-excerpt {"excerptLength":100,"style":{"elements":{"link":{"color":{"text":"var:preset|color|mono-2"}}}},"textColor":"mono-2","__woocommerceNamespace":"woocommerce/product-query/product-summary"} /-->
+
+<!-- wp:woocommerce/add-to-cart-form /-->
+
+<!-- wp:woocommerce/product-meta -->
+<div class="wp-block-woocommerce-product-meta"><!-- wp:group {"style":{"elements":{"link":{"color":{"text":"var:preset|color|mono-2"}}}},"textColor":"mono-2","layout":{"type":"flex","flexWrap":"nowrap"}} -->
+<div class="wp-block-group has-mono-2-color has-text-color has-link-color"><!-- wp:woocommerce/product-sku {"isDescendentOfSingleProductTemplate":true,"fontSize":"superbfont-xxsmall","style":{"typography":{"textTransform":"capitalize"}}} /-->
+
+<!-- wp:post-terms {"term":"product_cat","prefix":"Category: ","fontSize":"superbfont-xxsmall"} /-->
+
+<!-- wp:post-terms {"term":"product_tag","prefix":"Tags: ","fontSize":"superbfont-xxsmall"} /--></div>
+<!-- /wp:group --></div>
+<!-- /wp:woocommerce/product-meta --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns -->
+
+<!-- wp:woocommerce/product-details {"align":"wide","className":"is-style-minimal"} /-->
+
+<!-- wp:woocommerce/related-products {"align":"wide"} -->
+<div class="wp-block-woocommerce-related-products alignwide"><!-- wp:query {"queryId":0,"query":{"perPage":5,"pages":0,"offset":0,"postType":"product","order":"asc","orderBy":"title","author":"","search":"","exclude":[],"sticky":"","inherit":false},"namespace":"woocommerce/related-products","lock":{"remove":true,"move":true}} -->
+<div class="wp-block-query"><!-- wp:heading {"style":{"spacing":{"margin":{"top":"var:preset|spacing|superbspacing-medium","bottom":"0.67rem","right":"0"}}},"fontSize":"superbfont-large"} -->
+<h2 class="wp-block-heading has-superbfont-large-font-size" style="margin-top:var(--wp--preset--spacing--superbspacing-medium);margin-right:0;margin-bottom:0.67rem">
+				Related products			</h2>
+<!-- /wp:heading -->
+
+<!-- wp:post-template {"className":"products-block-post-template","layout":{"type":"grid","columnCount":5},"__woocommerceNamespace":"woocommerce/product-query/product-template"} -->
+<!-- wp:woocommerce/product-image {"isDescendentOfQueryLoop":true} /-->
+
+<!-- wp:post-title {"textAlign":"center","level":3,"style":{"spacing":{"margin":{"bottom":"0"}}},"fontSize":"superbfont-medium","__woocommerceNamespace":"woocommerce/product-query/product-title"} /-->
+
+<!-- wp:woocommerce/product-price {"isDescendentOfQueryLoop":true,"textAlign":"center","textColor":"mono-2","fontSize":"superbfont-xsmall","style":{"spacing":{"margin":{"bottom":"1rem","top":"0"}},"elements":{"link":{"color":{"text":"var:preset|color|mono-2"}}}}} /-->
+
+<!-- wp:woocommerce/product-button {"textAlign":"center","isDescendentOfQueryLoop":true,"style":{"spacing":{"margin":{"bottom":"1rem"}},"typography":{"fontSize":"15px"}}} /-->
+<!-- /wp:post-template --></div>
+<!-- /wp:query --></div>
+<!-- /wp:woocommerce/related-products --></main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","theme":"ruby-ecommerce"} /-->

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="e73a3704-1d7a-4dce-8cb2-78045598c1de" name="Cabeleireiro" url="http://tinabarros.online">
+        <fileTransfer rootFolder="/wp-content/themes/ruby-ecommerce" host="tinabarros.online" port="21">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
