@@ -50,136 +50,202 @@ $categorias = get_terms(['taxonomy' => 'product_cat', 'hide_empty' => true]);
 
 <?php wp_head(); ?>
 
-<style>
-body { font-family:system-ui,sans-serif; margin:0; padding:0; color:#000; background:#fff; }
-.lojaContainer { max-width:1200px; margin:0 auto; padding:40px 20px; }
+    <style>
+        :root {
+            --cor-primaria: #B89DBF;
+            --cor-primaria-hover: #A88DB0;
+            --cor-fundo-suave: #F8F5FA;
+            --cor-borda-suave: #D8CDE0;
+        }
 
-/* ✅ Sidebar novo, responsivo */
-.lojaLayout { display:flex; gap:30px; align-items:flex-start; }
-.sidebarCategorias {
-  flex:0 0 260px;
-  background:#fff;
-  border:1px solid #e0e0e0;
-  border-radius:16px;
-  padding:20px;
-  box-sizing:border-box;
-  transition:all .3s ease;
-}
-.sidebarCategorias h3 {
-  width:100%;
-  font-size:18px;
-  font-weight:600;
-  margin-bottom:15px;
-  padding-bottom:8px;
-  border-bottom:2px solid #e0e0e0;
-  text-transform:uppercase;
-  color:#000;
-}
-.categoryItem {
-  display:block;
-  padding:10px 12px;
-  color:#444;
-  text-decoration:none;
-  border-radius:8px;
-  margin-bottom:6px;
-  transition:.3s;
-}
-.categoryItem:hover { background:#f5f5f5; }
-.categoryItem.active { background:#000; color:#fff; }
+        /* Geral */
+        body {
+            background:#fff;
+            font-family: system-ui, sans-serif;
+            color:#000;
+        }
 
-/* ✅ Mantém a grid ORIGINAL (com 3 colunas) */
-.produtosGrid { display:grid; grid-template-columns:repeat(3,1fr); gap:25px; }
+        .lojaContainer {
+            max-width:1200px;
+            margin:0 auto;
+            padding:40px 20px;
+        }
 
-@media(max-width:900px){
-  .produtosGrid{ grid-template-columns:repeat(2,1fr); }
+        .lojaLayout {
+            display:flex;
+            gap:30px;
+            align-items:flex-start;
+        }
 
-  /* Sidebar responsivo como no novo */
-  .lojaLayout{ flex-direction:column; }
-  .sidebarCategorias {
-    width:100%;
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    border-radius:12px;
-    padding:10px 15px;
-  }
-  .sidebarCategorias h3 {
-    width:100%;
-    text-align:center;
-    font-size:16px;
-    margin-bottom:8px;
-    border-bottom:2px solid #e0e0e0;
-  }
-  .sidebarCategorias .categoryItem {
-    margin:0;
-    padding:8px 14px;
-    font-size:14px;
-    display:inline-block;
-  }
-}
+        /* ======================
+           SIDEBAR ESTILIZADA
+           ====================== */
+        .sidebarCategorias {
+            flex:0 0 260px;
+            background:var(--cor-fundo-suave);
+            border:1px solid var(--cor-borda-suave);
+            border-radius:16px;
+            padding:20px;
+        }
 
-@media(max-width:600px){
-  .produtosGrid{ grid-template-columns:1fr; }
+        .sidebarCategorias h3 {
+            font-size:18px;
+            font-weight:600;
+            margin-bottom:15px;
+            padding-bottom:6px;
+            border-bottom:2px solid var(--cor-borda-suave);
+            color:#000;
+            text-transform:uppercase;
+        }
 
-  .sidebarCategorias {
-    flex-wrap:wrap !important;
-    justify-content:flex-start !important;
-    align-items:flex-start !important;
-    overflow-x:visible !important;
-  }
-  .sidebarCategorias h3 {
-    text-align:left;
-    padding-bottom:6px;
-    margin-bottom:10px;
-  }
-}
+        .categoryItem {
+            display:block;
+            padding:10px 12px;
+            color:#444;
+            text-decoration:none;
+            border-radius:8px;
+            margin-bottom:6px;
+            transition:.3s;
+        }
 
-.productBox {
-  border:1px solid #ddd;
-  border-radius:10px;
-  padding:15px;
-  text-align:center;
-  background:#fff;
-  box-shadow:0 3px 8px rgba(0,0,0,0.05);
-  transition:0.3s;
-}
-.productBox:hover {
-  transform:translateY(-4px);
-  box-shadow:0 5px 10px rgba(0,0,0,0.1);
-}
+        .categoryItem:hover {
+            background:#eee;
+        }
 
-.productBox img { max-width:100%; border-radius:8px; margin-bottom:10px; }
-.productBox h3 { font-size:17px; margin:5px 0; }
-.productBox p { margin:0; }
+        .categoryItem.active {
+            background:var(--cor-primaria);
+            color:#fff !important;
+        }
 
-/* ✅ Mantém os BOTÕES ORIGINAIS */
-.productButtons { display:flex; justify-content:center; gap:10px; margin-top:10px; }
-.btn {
-  padding:6px 10px;
-  border-radius:0;
-  text-decoration:none;
-  color:#fff;
-  cursor:pointer;
-  border:none;
-  flex:1;
-  text-align:center;
-  font-size:14px;
-}
-.addToCartBtn,
-.viewProductBtn {
-    background:#000 !important;
-    color:#fff !important;
-}
+        /* ======================
+           GRID E PRODUCT CARDS
+           ====================== */
+        .produtosGrid {
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:25px;
+        }
 
-.addToCartBtn:hover, .viewProductBtn:hover { filter:brightness(1.1); }
+        .productBox {
+            border:1px solid var(--cor-borda-suave);
+            border-radius:12px;
+            padding:15px;
+            text-align:center;
+            background:var(--cor-fundo-suave);
+            box-shadow:0 3px 8px rgba(0,0,0,0.05);
+            transition:0.3s;
+        }
 
-.pagination { text-align:center; margin-top:30px; }
-.pagination a,.pagination span{
-  padding:8px 12px; margin:0 4px; border:1px solid #ccc; border-radius:6px;
-  text-decoration:none; color:#333;
-}
-.pagination .current { background:#000; color:#fff; border-color:#000; }
-</style>
+        .productBox:hover {
+            transform:translateY(-3px);
+            box-shadow:0 5px 12px rgba(0,0,0,0.12);
+        }
+
+        .productBox img {
+            max-width:100%;
+            border-radius:10px;
+            margin-bottom:10px;
+        }
+
+        .productBox h3 {
+            font-size:17px;
+            margin:5px 0;
+        }
+
+        /* ======================
+           BOTÕES PREMIUM
+           ====================== */
+        .productButtons {
+            display:flex;
+            justify-content:center;
+            gap:10px;
+            margin-top:12px;
+        }
+
+        .btn,
+        .addToCartBtn,
+        .viewProductBtn {
+            padding:10px 12px;
+            border-radius:8px;
+            text-decoration:none;
+            color:#fff !important;
+            cursor:pointer;
+            border:none;
+            flex:1;
+            font-size:14px;
+            background:var(--cor-primaria) !important;
+            transition:0.25s ease;
+            box-shadow:0 2px 5px rgba(0,0,0,0.08);
+        }
+
+        .btn:hover,
+        .addToCartBtn:hover,
+        .viewProductBtn:hover {
+            background:var(--cor-primaria-hover) !important;
+            transform:translateY(-2px);
+            box-shadow:0 4px 7px rgba(0,0,0,0.12);
+        }
+
+        /* ======================
+           BOTÃO DE BUSCA
+           ====================== */
+        button[type="submit"] {
+            background:var(--cor-primaria) !important;
+            color:#fff !important;
+            border:none !important;
+            padding:8px 14px;
+            border-radius:8px;
+        }
+
+        button[type="submit"]:hover {
+            background:var(--cor-primaria-hover) !important;
+        }
+
+        /* ======================
+           PAGINAÇÃO
+           ====================== */
+        .pagination a,
+        .pagination span {
+            padding:8px 12px;
+            margin:0 4px;
+            border:1px solid var(--cor-borda-suave);
+            border-radius:6px;
+            text-decoration:none;
+            color:#444;
+        }
+
+        .pagination .current {
+            background:var(--cor-primaria) !important;
+            border-color:var(--cor-primaria) !important;
+            color:#fff !important;
+        }
+
+        /* ======================
+           RESPONSIVIDADE
+           ====================== */
+        @media(max-width:900px){
+            .produtosGrid { grid-template-columns:repeat(2,1fr); }
+
+            .lojaLayout { flex-direction:column; }
+
+            .sidebarCategorias {
+                width:100%;
+                display:flex;
+                flex-wrap:wrap;
+                gap:10px;
+            }
+
+            .sidebarCategorias h3 {
+                width:100%;
+                text-align:center;
+            }
+        }
+
+        @media(max-width:600px){
+            .produtosGrid { grid-template-columns:1fr; }
+        }
+    </style>
+
 
 </head>
 <body <?php body_class(); ?>>

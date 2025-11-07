@@ -43,7 +43,7 @@ if (isset($_GET['acao']) && $_GET['acao']==='json') {
         } else {
             $is_owner = ($r->email_cliente === $current_user_email && $r->nome_cliente === $current_user_nome);
             $color = !$current_user_email ? 'red' : ($is_owner ? 'purple' : 'red');
-            $title = $is_owner ? date('H:i', strtotime($r->data_hora_inicio))." - ".date('H:i', strtotime($r->data_hora_fim))." ocupado" : "Horário ocupado";
+            $title = $is_owner ? date('H:i', strtotime($r->data_hora_inicio))." - ".date('H:i', strtotime($r->data_hora_fim))." ocupado" : "Horario ocupado";
             $events[] = [
                 "title"=>$title,
                 "start"=>$r->data_hora_inicio,
@@ -55,7 +55,8 @@ if (isset($_GET['acao']) && $_GET['acao']==='json') {
             ];
         }
     }
-    header('Content-Type: application/json');
+    header('Content-Type: application/json; charset=utf-8');
+
     echo json_encode($events);
     exit;
 }
@@ -96,7 +97,8 @@ if (isset($_GET['acao']) && $_GET['acao']==='horarios') {
         }
     }
 
-    header('Content-Type: application/json');
+    header('Content-Type: application/json; charset=utf-8');
+
     echo json_encode($ocupados);
     exit;
 }
@@ -129,41 +131,43 @@ $servicos = $wpdb->get_results("SELECT * FROM $table_servicos");
 <?php wp_head(); ?>
 
 <style>
-    body { background:#ffffff; font-family:system-ui,sans-serif; margin:0; padding:0; color:#000; }
+    body { background:#ffffff; font-family:system-ui,sans-serif; margin:0; padding:0; color:#222; }
     .header-login { display:flex; justify-content:space-between; align-items:center; padding:30px 50px; max-width:1200px; margin:0 auto; }
-    .header-login a { font-weight:700; font-size:2rem; text-decoration:none; color:#000; }
-    .header-login nav a { margin-left:20px; font-size:1rem; font-weight:500; text-decoration:none; color:#000; transition:0.3s; }
-    .header-login nav a:hover { text-decoration:underline; }
+    .header-login a { font-weight:700; font-size:2rem; text-decoration:none; color:#222; }
+    .header-login nav a { margin-left:20px; font-size:1rem; font-weight:500; text-decoration:none; color:#222; transition:0.3s; }
+    .header-login nav a:hover { color:#B89DBF; }
 
     .container { max-width:1200px; margin:30px auto 50px auto; display:grid; grid-template-columns:320px 1fr; gap:20px; }
 
-    .sidebar { background:#fff; padding:20px; border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,0.12); }
-    .sidebar h2 { margin-top:0; font-size:22px; margin-bottom:15px; }
-    .sidebar input { width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:10px; font-size:14px; box-sizing:border-box; }
+    .sidebar { background:#F8F5FA; padding:20px; border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,0.12); border:1px solid #D8CDE0; }
+    .sidebar h2 { margin-top:0; font-size:22px; margin-bottom:15px; color:#222; }
+    .sidebar input { width:100%; padding:10px; margin:8px 0; border:1px solid #D8CDE0; border-radius:10px; font-size:14px; box-sizing:border-box; background:#fff; }
 
     .servicos-container { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
-    .servico-card { padding:10px; border-radius:10px; background:#eee; text-align:center; cursor:pointer; font-weight:500; user-select:none; transition:0.3s; }
-    .servico-card.selected { background:#000; color:#fff; }
+    .servico-card { padding:10px; border-radius:10px; background:#F1EDF4; text-align:center; cursor:pointer; font-weight:500; user-select:none; transition:0.3s; border:1px solid #D8CDE0; }
+    .servico-card.selected { background:#B89DBF; color:#fff; }
 
-    #calendar { background:#fff; padding:20px; border-radius:20px; min-height:600px; box-shadow:0 10px 40px rgba(0,0,0,0.12); }
+    #calendar { background:#fff; padding:20px; border-radius:20px; min-height:600px; box-shadow:0 10px 40px rgba(0,0,0,0.12); border:1px solid #D8CDE0; }
 
-    #caixaHorarios { margin-top:20px; background:#fff; padding:20px; border-radius:20px; display:none; box-shadow:0 10px 40px rgba(0,0,0,0.12); }
+    #caixaHorarios { margin-top:20px; background:#fff; padding:20px; border-radius:20px; display:none; box-shadow:0 10px 40px rgba(0,0,0,0.12); border:1px solid #D8CDE0; overflow:hidden; }
 
     #horariosDisponiveis { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:15px; }
-    #horariosDisponiveis div { padding:8px; border-radius:8px; cursor:pointer; background:#eee; text-align:center; font-weight:500; }
+    #horariosDisponiveis div { padding:8px; border-radius:8px; cursor:pointer; background:#F1EDF4; text-align:center; font-weight:500; border:1px solid #D8CDE0; min-width:0; }
+    #horariosDisponiveis div:hover:not(.ocupado) { background:#E8E0F0; }
+
     #horariosDisponiveis div.ocupado { color:#fff; cursor:not-allowed; }
-    #horariosDisponiveis div.ocupado.red { background:red; }
-    #horariosDisponiveis div.ocupado.purple { background:purple; }
-    #horariosDisponiveis div.selecionado { background:green; color:#fff; }
+    #horariosDisponiveis div.ocupado.red { background:#C0392B; }
+    #horariosDisponiveis div.ocupado.purple { background:#8E44AD; }
+    #horariosDisponiveis div.selecionado { background:#B89DBF; color:#fff; }
 
-    button.agendarBtn { margin-top:10px; background:#000; color:#fff; padding:8px 15px; border:none; border-radius:10px; cursor:pointer; font-size:14px; transition:0.3s; }
-    button.agendarBtn:hover { background:#444; }
+    button.agendarBtn { margin-top:10px; background:#B89DBF; color:#fff; padding:8px 15px; border:none; border-radius:10px; cursor:pointer; font-size:14px; transition:0.3s; }
+    button.agendarBtn:hover { background:#A88DB0; }
 
-    .popup { position:fixed; top:20px; right:20px; background:#000; color:#fff; padding:15px 25px; border-radius:12px; display:none; z-index:999; }
+    .popup { position:fixed; top:20px; right:20px; background:#B89DBF; color:#fff; padding:15px 25px; border-radius:12px; display:none; z-index:999; }
 
-    .modal { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#fdfdfd; padding:25px; border-radius:16px; box-shadow:0 15px 50px rgba(0,0,0,0.3); z-index:10000; display:none; max-width:450px; width:90%; font-family:system-ui,sans-serif; animation:fadeIn 0.3s ease; text-align:center; }
+    .modal { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#fff; padding:25px; border-radius:16px; box-shadow:0 15px 50px rgba(0,0,0,0.3); z-index:10000; display:none; max-width:450px; width:90%; font-family:system-ui,sans-serif; animation:fadeIn 0.3s ease; text-align:center; border:1px solid #D8CDE0; }
     .modal h3 { margin-top:0; font-size:20px; color:#222; }
-    .modal .close { float:right; cursor:pointer; font-weight:bold; font-size:18px; }
+    .modal .close { float:right; cursor:pointer; font-weight:bold; font-size:18px; color:#B89DBF; }
     .modal ul { padding-left:0; margin-top:10px; list-style:none; }
     .modal ul li { margin-bottom:5px; color:#555; }
 
@@ -180,6 +184,7 @@ $servicos = $wpdb->get_results("SELECT * FROM $table_servicos");
         .servicos-container { grid-template-columns:1fr; }
         button.agendarBtn { width:100%; }
     }
+
 </style>
 
 
