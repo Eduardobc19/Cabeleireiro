@@ -60,7 +60,7 @@ $categorias = get_terms(['taxonomy' => 'product_cat', 'hide_empty' => true]);
 
         /* Geral */
         body {
-            background:#fff;
+            background:#FFF3FF;
             font-family: system-ui, sans-serif;
             color:#000;
         }
@@ -270,7 +270,7 @@ $categorias = get_terms(['taxonomy' => 'product_cat', 'hide_empty' => true]);
 
       <div style="margin-bottom:25px;">
         <form method="get">
-          <input type="text" name="busca" value="<?= esc_attr($busca) ?>" placeholder="Pesquisar..." 
+          <input type="text" name="busca" value="<?= esc_attr($busca) ?>" placeholder="Pesquisar..."
                  style="padding:8px 12px; border:1px solid #ccc; border-radius:8px;">
           <button type="submit" style="padding:8px 14px; background:#000; color:#fff; border:none; border-radius:8px;">Buscar</button>
         </form>
@@ -316,7 +316,7 @@ $categorias = get_terms(['taxonomy' => 'product_cat', 'hide_empty' => true]);
 jQuery(function($){
   $('.addToCartBtn').on('click', function(){
     const productId = $(this).data('id');
-    
+
     $.post('/?wc-ajax=add_to_cart', { product_id: productId, quantity: 1 }, function(){
       $(document.body).trigger('wc_fragment_refresh');
       setTimeout(()=>{ location.reload(); }, 600);

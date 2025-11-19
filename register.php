@@ -66,15 +66,13 @@ if (isset($_POST['register_user'])) {
 
 <style>
 body { 
-    background:#fff;
+    background:#f9f3ff;
     font-family:system-ui, sans-serif; 
     margin:0; 
     padding:0; 
     color:#000; 
 }
 
-/* ✅ REMOVIDO → não esconde mais header nem footer */
-/* Se quiser esconder APENAS o título da página: */
 .entry-title { display:none !important; }
 
 .container {

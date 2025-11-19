@@ -5,7 +5,8 @@ let horaInicioSelecionada = null,
     servicosSelecionados = [],
     diaSelecionadoCelula = null,
     agendamentosFixos = [],
-    calendar;
+    calendar,
+    agendamentoEmAndamento = false; // Bloqueio global
 
 document.addEventListener('DOMContentLoaded', () => {
     const nomeInput = document.getElementById('nome');
@@ -22,23 +23,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     iniciarCalendar();
 
-    // Atualiza o calendário quando muda o tamanho do ecrã
     window.addEventListener('resize', () => {
         if (calendar) calendar.updateSize();
     });
+
+    const btnAgendar = document.querySelector('.agendarBtn');
+    if (btnAgendar) btnAgendar.addEventListener('click', confirmarAgendamento);
 });
 
-function showPopup(msg, color = "#000") {
+function showPopup(msg, color = "#000", duration = 3000) {
     const popup = document.getElementById('popup');
     popup.textContent = msg;
     popup.style.background = color;
+    popup.style.opacity = "1";
     popup.style.display = 'block';
-    setTimeout(() => (popup.style.display = 'none'), 2500);
+
+    if (popup.fadeTimeout) clearTimeout(popup.fadeTimeout);
+
+    popup.fadeTimeout = setTimeout(() => {
+        popup.style.display = 'none';
+    }, duration);
 }
 
 function mostrarModalAgendamento(ag) {
     document.getElementById('modalHorario').textContent =
-        `Horário: ${formatTime(new Date(ag.start))} - ${formatTime(new Date(ag.end))}`;
+        `HorÃ¡rio: ${formatTime(new Date(ag.start))} - ${formatTime(new Date(ag.end))}`;
     document.getElementById('modalNomeCliente').textContent =
         ag.nome_cliente ? `Cliente: ${ag.nome_cliente}` : '';
     document.getElementById('modalEmailCliente').textContent =
@@ -81,7 +90,7 @@ function atualizarTempo() {
 
 function iniciarCalendar() {
     if (typeof FullCalendar === 'undefined') {
-        console.error("FullCalendar não carregado");
+        console.error("FullCalendar nÃ£o carregado");
         return;
     }
 
@@ -91,6 +100,12 @@ function iniciarCalendar() {
         locale: 'pt',
         buttonText: { today: 'Hoje' },
         events: window.location.href + '?acao=json',
+
+        dayCellClassNames: function(arg) {
+            if (arg.date.getDay() === 1) return ['segunda-feira'];
+            return [];
+        },
+
         dateClick(info) {
             if (diaSelecionadoCelula) diaSelecionadoCelula.style.outline = "";
             diaSelecionadoCelula = info.dayEl;
@@ -105,6 +120,7 @@ function iniciarCalendar() {
 
             carregarAgendamentosFixos();
         },
+
         eventClick(info) {
             mostrarModalAgendamento({
                 start: info.event.start,
@@ -115,6 +131,7 @@ function iniciarCalendar() {
                 servicos: info.event.extendedProps.servicos || ''
             });
         },
+
         windowResize() {
             calendar.updateSize();
         }
@@ -122,7 +139,9 @@ function iniciarCalendar() {
 
     calendar.render();
 
+    // AtualizaÃ§Ã£o periÃ³dica protegida
     setInterval(() => {
+        if (agendamentoEmAndamento) return; // Bloqueia enquanto salva
         if (calendar) calendar.refetchEvents();
         if (diaSelecionado) carregarAgendamentosFixos();
     }, 30000);
@@ -142,7 +161,7 @@ function carregarAgendamentosFixos() {
             }));
             gerarHorarios(diaSelecionado, duracaoSelecionada);
         })
-        .catch(err => console.error("Erro ao carregar horários:", err));
+        .catch(err => console.error("Erro ao carregar horÃ¡rios:", err));
 }
 
 function gerarHorarios(dia, duracao) {
@@ -152,15 +171,31 @@ function gerarHorarios(dia, duracao) {
     const container = document.getElementById('horariosDisponiveis');
     container.innerHTML = '';
 
+    const weekday = new Date(dia).getDay();
+
+    // Segunda-feira = Folga
+    if (weekday === 1) {
+        const div = document.createElement('div');
+        div.textContent = 'Dia de folga';
+        div.classList.add('ocupado', 'folga');
+        div.style.background = '#C0392B';
+        div.style.color = '#fff';
+        div.style.cursor = 'not-allowed';
+        div.onclick = () => showPopup('Dia de folga', 'red');
+        container.appendChild(div);
+        return;
+    }
+
+    // HorÃ¡rios ocupados
     agendamentosFixos.forEach(a => {
         const div = document.createElement('div');
         if (a.nome_cliente && a.nome_cliente !== 'Folga') {
             div.textContent =
                 window.isAdmin ||
                 (a.email_cliente === window.currentUserEmail &&
-                 a.nome_cliente === window.currentUserNome)
+                    a.nome_cliente === window.currentUserNome)
                     ? `${formatTime(a.start)} - ${formatTime(a.end)} | ${a.nome_cliente}`
-                    : 'Horário ocupado';
+                    : 'HorÃ¡rio ocupado';
         } else if (a.nome_cliente === 'Folga') {
             div.textContent = 'Folga';
         }
@@ -169,9 +204,7 @@ function gerarHorarios(dia, duracao) {
         container.appendChild(div);
     });
 
-    const weekday = new Date(dia).getDay();
-    if (weekday === 1) return; // segunda-feira é folga
-
+    // PerÃ­odos disponÃ­veis
     let periodos = [];
     if (weekday >= 2 && weekday <= 5)
         periodos = [['09:00', '12:30'], ['14:00', '19:00']];
@@ -189,7 +222,8 @@ function gerarHorarios(dia, duracao) {
             const fimBloco = new Date(startH.getTime() + duracao * 60 * 1000);
 
             const overlap = agendamentosFixos.some(a =>
-                blocoLivre < a.end && fimBloco > a.start
+                blocoLivre.getTime() < a.end.getTime() &&
+                fimBloco.getTime() > a.start.getTime()
             );
 
             if (!overlap) {
@@ -214,9 +248,15 @@ function gerarHorarios(dia, duracao) {
 
 function confirmarAgendamento() {
     if (!horaInicioSelecionada || servicosSelecionados.length === 0) {
-        showPopup("Selecione horário e serviços", "red");
+        showPopup("Selecione horÃ¡rio e serviÃ§os", "red");
         return;
     }
+
+    if (agendamentoEmAndamento) return; // Bloqueio extra
+    agendamentoEmAndamento = true;
+
+    const btnAgendar = document.querySelector('.agendarBtn');
+    btnAgendar.disabled = true;
 
     const payload = {
         acao: 'salvar',
@@ -234,17 +274,30 @@ function confirmarAgendamento() {
     })
         .then(r => r.json())
         .then(res => {
+            const popupDuration = 2500;
             if (res.status === "success") {
-                showPopup(res.msg, "green");
-                if (calendar) calendar.refetchEvents();
-                carregarAgendamentosFixos();
+                showPopup(res.msg, "green", popupDuration);
+                setTimeout(() => {
+                    if (calendar) calendar.refetchEvents();
+                    carregarAgendamentosFixos();
+                    btnAgendar.disabled = false;
+                    agendamentoEmAndamento = false;
+                }, popupDuration);
             } else {
-                showPopup(res.msg || "Erro ao agendar", "red");
+                showPopup(res.msg || "Erro ao agendar", "red", popupDuration);
+                setTimeout(() => {
+                    btnAgendar.disabled = false;
+                    agendamentoEmAndamento = false;
+                }, popupDuration);
             }
         })
         .catch(err => {
             console.error(err);
-            showPopup("Erro ao comunicar com o servidor", "red");
+            showPopup("Erro ao comunicar com o servidor", "red", 2500);
+            setTimeout(() => {
+                btnAgendar.disabled = false;
+                agendamentoEmAndamento = false;
+            }, 2500);
         });
 }
 
